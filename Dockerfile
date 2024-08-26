@@ -9,7 +9,7 @@ COPY package.json pnpm-lock.yaml* ./
 
 # Instala pnpm globalmente
 RUN npm install -g pnpm
-RUN pnpm add polka
+# RUN pnpm add polka
 
 
 # Instala las dependencias de la aplicación
@@ -19,7 +19,7 @@ RUN pnpm i
 COPY . .
 
 # Copia los certificados SSL en formato PEM al contenedor
-COPY cert.pem key.pem /usr/src/app/
+# COPY cert.pem key.pem /usr/src/app/
 
 # Expone el puerto 3200 para HTTPS
 EXPOSE 3200
