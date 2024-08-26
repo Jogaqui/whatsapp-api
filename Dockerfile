@@ -22,7 +22,7 @@ COPY . .
 # COPY cert.pem key.pem /usr/src/app/
 
 # Expone el puerto 3200 para HTTPS
-EXPOSE 3200
+EXPOSE 3002
 
 # Ejecuta la aplicación
 CMD ["pnpm", "run", "dev"]
