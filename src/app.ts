@@ -6,9 +6,17 @@ const flowBienvenida = addKeyword('hola').addAnswer('Buenas! Bienvenido');
 
 const main = async () => {
     const provider = createProvider(BaileysProvider);
+    const sslOptions = {
+        key: fs.readFileSync('key.pem'),
+        cert: fs.readFileSync('cert.pem')
+    };
+    const httpsServer = https.createServer(sslOptions, provider.http?.server);
 
-    provider.initHttpServer(3002);
-
+    httpsServer.listen(3200, () => {
+        console.log('Servidor HTTPS ejecutándose en https://localhost:3200');
+    });
+    
+     const httpsServer = https.createServer(sslOptions, provider.http?.server);
     // Configura CORS para aceptar todas las solicitudes
     provider.http?.server.use(cors({
         origin: '*', // Permite solicitudes de cualquier origen
