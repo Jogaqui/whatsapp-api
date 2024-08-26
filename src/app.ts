@@ -9,8 +9,8 @@ const flowBienvenida = addKeyword('hola').addAnswer('Buenas! Bienvenido');
 const main = async () => {
     const provider = createProvider(BaileysProvider);
     const httpsOptions = {
-    key: fs.readFileSync('/ruta/a/tu/privkey.pem'),
-    cert: fs.readFileSync('/ruta/a/tu/fullchain.pem')
+    key: fs.readFileSync('.././key.pem'),
+    cert: fs.readFileSync('.././cert.pem')
     };
     provider.initHttpServer(3002, httpsOptions);
 
