@@ -10,17 +10,17 @@ COPY package.json pnpm-lock.yaml* ./
 # Instala pnpm globalmente
 RUN npm install -g pnpm
 
-# Instala las dependencias
+# Instala las dependencias de la aplicación
 RUN pnpm install
 
 # Copia el resto de los archivos de la aplicación
 COPY . .
 
-# Copia los certificados SSL al contenedor
+# Copia los certificados SSL en formato PEM al contenedor
 COPY cert.pem key.pem /usr/src/app/
 
 # Expone el puerto 3200 para HTTPS
 EXPOSE 3200
 
-# Ejecuta la aplicación en modo desarrollo
+# Ejecuta la aplicación
 CMD ["pnpm", "run", "dev"]
