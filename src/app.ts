@@ -3,29 +3,30 @@ import { BaileysProvider, handleCtx } from '@bot-whatsapp/provider-baileys';
 import cors from "cors";
 import https from "https";
 import fs from "fs";
+import express from "express";
 
 const flowBienvenida = addKeyword('hola').addAnswer('Buenas! Bienvenido');
 
 const main = async () => {
+    const app = express();
     const provider = createProvider(BaileysProvider);
-    
+
     // Configuración de HTTPS
     const httpsOptions = {
         key: fs.readFileSync('key.pem'),
         cert: fs.readFileSync('cert.pem')
     };
 
-    // Crear servidor HTTPS
-    const httpsServer = https.createServer(httpsOptions, provider.httpServer());
-
     // Configurar CORS
-    provider.httpServer().use(cors({
+    app.use(cors({
         origin: '*',
         methods: ['GET', 'POST', 'PUT', 'DELETE'],
         allowedHeaders: ['Content-Type', 'Authorization'],
     }));
 
-    provider.httpServer().post('/send-message', handleCtx(async (bot, req, res) => {
+    app.use(express.json());
+
+    app.post('/send-message', handleCtx(async (bot, req, res) => {
         try {
             const body = req.body;
             const phone = body.phone;
@@ -43,13 +44,16 @@ const main = async () => {
         }
     }));
 
+    // Crear servidor HTTPS
+    const httpsServer = https.createServer(httpsOptions, app);
+
     // Iniciar el servidor HTTPS
     httpsServer.listen(3002, () => {
         console.log('Servidor HTTPS escuchando en el puerto 3002');
     });
 
     await createBot({
-        flow: createFlow([]),
+        flow: createFlow([flowBienvenida]),
         database: new MemoryDB(),
         provider
     });
