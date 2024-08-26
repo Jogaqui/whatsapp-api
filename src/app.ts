@@ -25,19 +25,14 @@ const main = async () => {
 
             console.log(body);
             
-            if (!phone || !message) {
-                res.status(400).send('Faltan parámetros necesarios.');
-                return;
-            }
-
             await bot.sendMessage(phone, message, {
                 media: mediaUrl
             });
 
-            res.status(200).send('Mensaje enviado correctamente!');
+            res.end('Mensaje enviado correctamente!!!')
         } catch (error) {
             console.error('Error al enviar el mensaje:', error);
-            res.status(500).send('Ocurrió un error al enviar el mensaje.');
+            res.end('Mensaje no enviado!!!')
         }
     }));
 
