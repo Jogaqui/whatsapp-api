@@ -1,43 +1,28 @@
 import { createBot, createFlow, MemoryDB, createProvider, addKeyword } from "@bot-whatsapp/bot";
 import { BaileysProvider, handleCtx } from '@bot-whatsapp/provider-baileys';
-import cors from "cors"; // Importa el paquete cors
+import cors from "cors";
 import https from 'https';
 import fs from 'fs';
+import polka from 'polka'; // Si usas Polka como servidor HTTP
 
-const flowBienvenida = addKeyword('hola').addAnswer('Buenas! Bienvenido');
+const flowBienvenida = addKeyword('hola').addAnswer('¡Buenas! Bienvenido');
 
 const main = async () => {
     const provider = createProvider(BaileysProvider);
-
-    // Cargar certificados SSL en formato PEM
-    const sslOptions = {
-        key: fs.readFileSync('key.pem'),
-        cert: fs.readFileSync('cert.pem')
-    };
-
-    // Crear e iniciar el servidor HTTPS
-    const httpsServer = https.createServer(sslOptions, provider.http?.server);
-
-    httpsServer.listen(3200, () => {
-        console.log('Servidor HTTPS ejecutándose en https://localhost:3200');
-    });
-
-    // Configura CORS para aceptar todas las solicitudes
-    provider.http?.server.use(cors({
-        origin: '*', // Permite solicitudes de cualquier origen
-        methods: ['GET', 'POST', 'PUT', 'DELETE'], // Permite los métodos HTTP especificados
-        allowedHeaders: ['Content-Type', 'Authorization'], // Permite los encabezados especificados
+    
+    // Crear un servidor Polka y usar CORS
+    const server = polka();
+    server.use(cors({
+        origin: '*',
+        methods: ['GET', 'POST', 'PUT', 'DELETE'],
+        allowedHeaders: ['Content-Type', 'Authorization'],
     }));
 
-    // Configura la ruta para enviar mensajes
-    provider.http?.server.post('/send-message', handleCtx(async (bot, req, res) => {
+    // Añadir ruta para enviar mensajes
+    server.post('/send-message', handleCtx(async (bot, req, res) => {
         try {
-            const body = req.body;
-            const phone = body.phone;
-            const message = body.message;
-            const mediaUrl = body.mediaUrl;
-
-            console.log(body);
+            const { phone, message, mediaUrl } = req.body;
+            console.log(req.body);
             
             await bot.sendMessage(phone, message, {
                 media: mediaUrl
@@ -50,7 +35,19 @@ const main = async () => {
         }
     }));
 
-    // Crear el bot
+    // Crear y configurar el servidor HTTPS
+    const sslOptions = {
+        key: fs.readFileSync('key.pem'),
+        cert: fs.readFileSync('cert.pem')
+    };
+    
+    // Pasar el manejador de solicitudes de Polka a https.createServer
+    const httpsServer = https.createServer(sslOptions, server.handler);
+
+    httpsServer.listen(3200, () => {
+        console.log('Servidor HTTPS ejecutándose en https://localhost:3200');
+    });
+
     await createBot({
         flow: createFlow([flowBienvenida]),
         database: new MemoryDB(),
