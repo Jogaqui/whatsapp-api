@@ -9,7 +9,7 @@ COPY package.json pnpm-lock.yaml* ./
 
 # Instala pnpm globalmente
 RUN npm install -g pnpm
-RUN install polka
+RUN pnpm add polka
 
 
 # Instala las dependencias de la aplicación
