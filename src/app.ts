@@ -1,42 +1,39 @@
 import { createBot, createFlow, MemoryDB, createProvider, addKeyword } from "@bot-whatsapp/bot";
 import { BaileysProvider, handleCtx } from '@bot-whatsapp/provider-baileys';
-import cors from "cors";
-import https from "https";
-import fs from "fs";
-import express from "express";
+import cors from "cors"; // Importa el paquete cors
+import https from 'https';
+import fs from 'fs';
 
 const flowBienvenida = addKeyword('hola').addAnswer('Buenas! Bienvenido');
 
 const main = async () => {
-    const app = express();
     const provider = createProvider(BaileysProvider);
-
-    // Configuración de HTTPS
     const httpsOptions = {
-        key: fs.readFileSync('.././key.pem'),
-        cert: fs.readFileSync('.././cert.pem')
+    key: fs.readFileSync('/ruta/a/tu/privkey.pem'),
+    cert: fs.readFileSync('/ruta/a/tu/fullchain.pem')
     };
+    provider.initHttpServer(3002, httpsOptions);
 
-    // Configurar CORS
-    app.use(cors({
-        origin: '*',
-        methods: ['GET', 'POST', 'PUT', 'DELETE'],
-        allowedHeaders: ['Content-Type', 'Authorization'],
+    // Configura CORS para aceptar todas las solicitudes
+    provider.http?.server.use(cors({
+        origin: '*', // Permite solicitudes de cualquier origen
+        methods: ['GET', 'POST', 'PUT', 'DELETE'], // Permite los métodos HTTP especificados
+        allowedHeaders: ['Content-Type', 'Authorization'], // Permite los encabezados especificados
     }));
 
-    app.use(express.json());
-
-    app.post('/send-message', handleCtx(async (bot, req, res) => {
+    provider.http?.server.post('/send-message', handleCtx(async (bot, req, res) => {
         try {
             const body = req.body;
             const phone = body.phone;
             const message = body.message;
             const mediaUrl = body.mediaUrl;
+
             console.log(body);
             
             await bot.sendMessage(phone, message, {
                 media: mediaUrl
             });
+
             res.end('Mensaje enviado correctamente!!!')
         } catch (error) {
             console.error('Error al enviar el mensaje:', error);
@@ -44,16 +41,8 @@ const main = async () => {
         }
     }));
 
-    // Crear servidor HTTPS
-    const httpsServer = https.createServer(httpsOptions, app);
-
-    // Iniciar el servidor HTTPS
-    httpsServer.listen(3002, () => {
-        console.log('Servidor HTTPS escuchando en el puerto 3002');
-    });
-
     await createBot({
-        flow: createFlow([flowBienvenida]),
+        flow: createFlow([]),
         database: new MemoryDB(),
         provider
     });
