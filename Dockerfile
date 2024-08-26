@@ -10,7 +10,7 @@ COPY package.json pnpm-lock.yaml* ./
 # Instala pnpm globalmente
 RUN npm install -g pnpm
 # RUN pnpm add polka
-
+pnpm add express @types/express
 
 # Instala las dependencias de la aplicación
 RUN pnpm i
