@@ -11,7 +11,7 @@ COPY package.json pnpm-lock.yaml* ./
 RUN npm install -g pnpm
 
 # Instala las dependencias de la aplicación
-RUN pnpm install
+RUN pnpm i
 
 # Copia el resto de los archivos de la aplicación
 COPY . .
