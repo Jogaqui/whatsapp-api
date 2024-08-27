@@ -1,56 +1,37 @@
 import { createBot, createFlow, MemoryDB, createProvider, addKeyword } from "@bot-whatsapp/bot";
 import { BaileysProvider, handleCtx } from '@bot-whatsapp/provider-baileys';
 import cors from "cors";
-import https from 'https';
-import fs from 'fs';
-import express from 'express';
-import { fileURLToPath } from 'url'; // Importa 'fileURLToPath'
-import path from 'path'; // Importa 'path'
+import https from "https";
+import fs from "fs";
 
 const flowBienvenida = addKeyword('hola').addAnswer('Buenas! Bienvenido');
 
 const main = async () => {
-    const app = express();
-
-    app.use(express.json());
-    app.use(cors({
-        origin: '*',
-        methods: ['GET', 'POST', 'PUT', 'DELETE'],
-        allowedHeaders: ['Content-Type', 'Authorization'],
-    }));
-
-
+    const provider = createProvider(BaileysProvider);
+    
+    // Configuración de HTTPS
     const httpsOptions = {
         key: fs.readFileSync('key.pem'),
         cert: fs.readFileSync('cert.pem')
     };
 
-    const provider = createProvider(BaileysProvider);
-    const httpsServer = https.createServer(httpsOptions, app);
-    provider.initHttpServer(8444);
+    // Crear servidor HTTPS
+    const httpsServer = https.createServer(httpsOptions, provider.httpServer());
 
-    // Obtén la ruta del directorio actual usando 'import.meta.url'
-    const __filename = fileURLToPath(import.meta.url);
-    const __dirname = path.dirname(__filename);
+    // Configurar CORS
+    provider.httpServer().use(cors({
+        origin: '*',
+        methods: ['GET', 'POST', 'PUT', 'DELETE'],
+        allowedHeaders: ['Content-Type', 'Authorization'],
+    }));
 
-    // Ruta para el archivo bot.qr.png que está en la carpeta anterior
-    app.get('/get-bot-qr', (req, res) => {
-        const filePath = path.resolve(__dirname, '..', 'bot.qr.png'); // Ajusta la ruta para ir un nivel arriba
-        res.sendFile(filePath, (err) => {
-            if (err) {
-                console.error('Error al enviar el archivo:', err);
-                res.status(500).send('Error al enviar el archivo');
-            }
-        });
-    });
-
-    app.post('/send-message', handleCtx(async (bot, req, res) => {
+    provider.httpServer().post('/send-message', handleCtx(async (bot, req, res) => {
         try {
-            console.log('Cuerpo de la solicitud:', req.body);
             const body = req.body;
             const phone = body.phone;
             const message = body.message;
             const mediaUrl = body.mediaUrl;
+            console.log(body);
             
             await bot.sendMessage(phone, message, {
                 media: mediaUrl
@@ -62,12 +43,13 @@ const main = async () => {
         }
     }));
 
-    httpsServer.listen(8443, () => {
-        console.log('Servidor HTTPS escuchando en el puerto 8443');
+    // Iniciar el servidor HTTPS
+    httpsServer.listen(3002, () => {
+        console.log('Servidor HTTPS escuchando en el puerto 3002');
     });
 
     await createBot({
-        flow: createFlow([flowBienvenida]),
+        flow: createFlow([]),
         database: new MemoryDB(),
         provider
     });
