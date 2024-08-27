@@ -4,6 +4,8 @@ import fs from 'fs';
 import cors from 'cors';
 import { createBot, createFlow, MemoryDB, createProvider, addKeyword } from "@bot-whatsapp/bot";
 import { BaileysProvider, handleCtx } from '@bot-whatsapp/provider-baileys';
+import { fileURLToPath } from 'url'; // Importa 'fileURLToPath'
+import path from 'path'; // Importa 'path'
 
 const app = express();
 app.use(cors());
@@ -29,6 +31,21 @@ const main = async () => {
         }
     }));
 
+    // Obtén la ruta del directorio actual usando 'import.meta.url'
+    const __filename = fileURLToPath(import.meta.url);
+    const __dirname = path.dirname(__filename);
+
+    // Ruta para el archivo bot.qr.png que está en la carpeta anterior
+    httpsServer.htt.get('/get-bot-qr', (req, res) => {
+        const filePath = path.resolve(__dirname, '..', 'bot.qr.png'); // Ajusta la ruta para ir un nivel arriba
+        res.sendFile(filePath, (err) => {
+            if (err) {
+                console.error('Error al enviar el archivo:', err);
+                res.status(500).send('Error al enviar el archivo');
+            }
+        });
+    });
+    
     const httpsOptions = {
         key: fs.readFileSync('key.pem'),
         cert: fs.readFileSync('cert.pem')
