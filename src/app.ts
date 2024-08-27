@@ -42,7 +42,7 @@ const main = async () => {
         }
     }));
 
-    httpsServer.listen(3002, () => {
+    httpsServer.listen(8844, () => {
         console.log('Servidor HTTPS escuchando en el puerto 3002');
     });
 
