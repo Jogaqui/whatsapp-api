@@ -52,7 +52,7 @@ const main = async () => {
             const message = body.message;
             const mediaUrl = body.mediaUrl;
             
-            await provider.sendMessage(phone, message, {
+            await bot.sendMessage(phone, message, {
                 media: mediaUrl
             });
             res.end('Mensaje enviado correctamente!!!')
