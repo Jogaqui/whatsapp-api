@@ -6,21 +6,18 @@ import fs from 'fs';
 import express from 'express';
 import { fileURLToPath } from 'url'; // Importa 'fileURLToPath'
 import path from 'path'; // Importa 'path'
-import bodyParser from 'body-parser';
 
 const flowBienvenida = addKeyword('hola').addAnswer('Buenas! Bienvenido');
 
 const main = async () => {
     const app = express();
+
+    app.use(express.json());
     app.use(cors({
         origin: '*',
         methods: ['GET', 'POST', 'PUT', 'DELETE'],
         allowedHeaders: ['Content-Type', 'Authorization'],
     }));
-
-
-
-    app.use(bodyParser.json());
 
 
     const httpsOptions = {
@@ -29,8 +26,8 @@ const main = async () => {
     };
 
     const provider = createProvider(BaileysProvider);
-    provider.initHttpServer(8444);
     const httpsServer = https.createServer(httpsOptions, app);
+    provider.initHttpServer(8444);
 
     // Obtén la ruta del directorio actual usando 'import.meta.url'
     const __filename = fileURLToPath(import.meta.url);
