@@ -4,6 +4,7 @@ import cors from "cors";
 import https from 'https';
 import fs from 'fs';
 import express from 'express';
+import path from 'path';
 
 const flowBienvenida = addKeyword('hola').addAnswer('Buenas! Bienvenido');
 
@@ -23,6 +24,17 @@ const main = async () => {
     const httpsServer = https.createServer(httpsOptions, app);
 
     const provider = createProvider(BaileysProvider);
+
+    // Ruta GET para obtener el archivo bot.qr.png
+    app.get('/get-bot-qr', (req, res) => {
+        const filePath = path.join(__dirname, 'bot.qr.png'); // Asegúrate de que la ruta sea correcta
+        res.sendFile(filePath, (err) => {
+            if (err) {
+                console.error('Error al enviar el archivo:', err);
+                res.status(500).send('Error al enviar el archivo');
+            }
+        });
+    });
 
     app.post('/send-message', handleCtx(async (bot, req, res) => {
         try {
