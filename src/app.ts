@@ -4,6 +4,7 @@ import cors from "cors";
 import https from 'https';
 import fs from 'fs';
 import express from 'express';
+import { fileURLToPath } from 'url';
 import path from 'path';
 
 const flowBienvenida = addKeyword('hola').addAnswer('Buenas! Bienvenido');
@@ -24,6 +25,9 @@ const main = async () => {
     const httpsServer = https.createServer(httpsOptions, app);
 
     const provider = createProvider(BaileysProvider);
+
+    const __filename = fileURLToPath(import.meta.url);
+    const __dirname = path.dirname(__filename);
 
     // Ruta GET para obtener el archivo bot.qr.png
     app.get('/get-bot-qr', (req, res) => {
