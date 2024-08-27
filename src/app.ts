@@ -42,8 +42,8 @@ const main = async () => {
         }
     }));
 
-    httpsServer.listen(8844, () => {
-        console.log('Servidor HTTPS escuchando en el puerto 3002');
+    httpsServer.listen(8843, () => {
+        console.log('Servidor HTTPS escuchando en el puerto 8843');
     });
 
     await createBot({
