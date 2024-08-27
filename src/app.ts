@@ -12,7 +12,7 @@ const main = async () => {
     key: fs.readFileSync('key.pem'),
     cert: fs.readFileSync('cert.pem')
     };
-    provider.initHttpServer(3002, httpsOptions);
+    provider.initHttpServer(8443, httpsOptions);
 
     // Configura CORS para aceptar todas las solicitudes
     provider.http?.server.use(cors({
