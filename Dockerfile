@@ -25,4 +25,4 @@ COPY . .
 EXPOSE 3002
 
 # Ejecuta la aplicación
-CMD ["pnpm", "run", "dev", "--", "--port", "3002", "--https"]
+CMD ["pnpm", "run", "dev", "--", "--port", "8443", "--https"]
