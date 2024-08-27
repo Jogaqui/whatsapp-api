@@ -25,4 +25,5 @@ COPY . .
 EXPOSE 8443
 
 # Ejecuta la aplicación
-CMD ["pnpm", "run", "dev", "--", "--port", "8443", "--https"]
+#CMD ["pnpm", "run", "dev", "--", "--port", "8443", "--https"]
+CMD ["pnpm", "run", "dev"]
