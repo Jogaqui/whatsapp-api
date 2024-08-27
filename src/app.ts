@@ -36,7 +36,7 @@ const main = async () => {
     const __dirname = path.dirname(__filename);
 
     // Ruta para el archivo bot.qr.png que está en la carpeta anterior
-    httpsServer.htt.get('/get-bot-qr', (req, res) => {
+    app.get('/get-bot-qr', (req, res) => {
         const filePath = path.resolve(__dirname, '..', 'bot.qr.png'); // Ajusta la ruta para ir un nivel arriba
         res.sendFile(filePath, (err) => {
             if (err) {
