@@ -4,8 +4,8 @@ import cors from "cors";
 import https from 'https';
 import fs from 'fs';
 import express from 'express';
-import { fileURLToPath } from 'url';
-import path from 'path';
+import { fileURLToPath } from 'url'; // Importa 'fileURLToPath'
+import path from 'path'; // Importa 'path'
 
 const flowBienvenida = addKeyword('hola').addAnswer('Buenas! Bienvenido');
 
@@ -26,12 +26,13 @@ const main = async () => {
 
     const provider = createProvider(BaileysProvider);
 
+    // Obtén la ruta del directorio actual usando 'import.meta.url'
     const __filename = fileURLToPath(import.meta.url);
     const __dirname = path.dirname(__filename);
 
-    // Ruta GET para obtener el archivo bot.qr.png
+    // Ruta para el archivo bot.qr.png que está en la carpeta anterior
     app.get('/get-bot-qr', (req, res) => {
-        const filePath = path.join(__dirname, 'bot.qr.png'); // Asegúrate de que la ruta sea correcta
+        const filePath = path.resolve(__dirname, '..', 'bot.qr.png'); // Ajusta la ruta para ir un nivel arriba
         res.sendFile(filePath, (err) => {
             if (err) {
                 console.error('Error al enviar el archivo:', err);
@@ -70,5 +71,5 @@ const main = async () => {
 };
 
 main().catch(error => {
-    console.error('Error en la aplicación:', error);
+    console.error('Error en la aplicación:', error);
 });
