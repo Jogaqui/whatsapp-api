@@ -4,13 +4,15 @@ import cors from "cors";
 import https from 'https';
 import fs from 'fs';
 import express from 'express';
-import { fileURLToPath } from 'url'; // Importa 'fileURLToPath'
-import path from 'path'; // Importa 'path'
+import { fileURLToPath } from 'url';
+import path from 'path';
 
 const flowBienvenida = addKeyword('hola').addAnswer('Buenas! Bienvenido');
 
 const main = async () => {
     const app = express();
+    
+    app.use(express.json());
     app.use(cors({
         origin: '*',
         methods: ['GET', 'POST', 'PUT', 'DELETE'],
@@ -41,23 +43,34 @@ const main = async () => {
         });
     });
 
-    app.post('/send-message', handleCtx(async (bot, req, res) => {
+    let providerInstance;
+
+    // En la función main, después de crear el proveedor:
+    providerInstance = provider;
+
+    // En la ruta de envío de mensajes:
+    app.post('/send-message', async (req, res) => {
         try {
-            const body = req.body;
-            const phone = body.phone;
-            const message = body.message;
-            const mediaUrl = body.mediaUrl;
-            console.log(body);
+            console.log('Cuerpo de la solicitud:', req.body);
+            const { phone, message, mediaUrl } = req.body;
             
-            await bot.sendMessage(phone, message, {
+            if (!phone || !message) {
+                return res.status(400).send('Se requieren phone y message');
+            }
+
+            if (!providerInstance) {
+                return res.status(500).send('Proveedor no inicializado');
+            }
+
+            await providerInstance.sendMessage(phone, message, {
                 media: mediaUrl
             });
-            res.end('Mensaje enviado correctamente!!!')
+            res.send('Mensaje enviado correctamente!!!');
         } catch (error) {
             console.error('Error al enviar el mensaje:', error);
-            res.end('Mensaje no enviado!!!')
+            res.status(500).send('Mensaje no enviado!!!');
         }
-    }));
+    });
 
     httpsServer.listen(8443, () => {
         console.log('Servidor HTTPS escuchando en el puerto 8443');
@@ -71,5 +84,5 @@ const main = async () => {
 };
 
 main().catch(error => {
-    console.error('Error en la aplicación:', error);
+    console.error('Error en la aplicación:', error);
 });
