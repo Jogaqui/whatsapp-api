@@ -20,6 +20,12 @@ importers:
       dotenv:
         specifier: ^16.4.5
         version: 16.4.5
+      fs:
+        specifier: 0.0.1-security
+        version: 0.0.1-security
+      https:
+        specifier: ^1.0.0
+        version: 1.0.0
     devDependencies:
       tsm:
         specifier: ^2.3.0
@@ -575,9 +581,15 @@ packages:
     resolution: {integrity: sha512-ETEklSGi5t0QMZuiXoA/Q6vcnxcLQP5vdugSpuAyi6SVGi2clPPp+xgEhuMaHC+zGgn31Kd235W35f7Hykkaww==}
     engines: {node: '>= 6'}
 
+  fs@0.0.1-security:
+    resolution: {integrity: sha512-3XY9e1pP0CVEUCdj5BmfIZxRBTSDycnbqhIOGec9QYtmVH2fbLpj86CFWkrNOkt/Fvty4KZG5lTglL9j/gJ87w==}
+
   futoin-hkdf@1.5.3:
     resolution: {integrity: sha512-SewY5KdMpaoCeh7jachEWFsh1nNlaDjNHZXWqL5IGwtpEYHTgkr2+AMCgNwKWkcc0wpSYrZfR7he4WdmHFtDxQ==}
     engines: {node: '>=8'}
+
+  https@1.0.0:
+    resolution: {integrity: sha512-4EC57ddXrkaF0x83Oj8sM6SLQHAWXw90Skqu2M4AEWENZ3F02dFJE/GARA8igO79tcgYqGrD7ae4f5L3um2lgg==}
 
   ieee754@1.2.1:
     resolution: {integrity: sha512-dcyqhDvX1C46lXZcVqCpK+FtMRQVdIMN6/Df5js2zouUsqG7I6sFxitIC+7KYK29KdXOLHdu9zL4sFnoVQnqaA==}
@@ -1294,7 +1306,11 @@ snapshots:
       combined-stream: 1.0.8
       mime-types: 2.1.35
 
+  fs@0.0.1-security: {}
+
   futoin-hkdf@1.5.3: {}
+
+  https@1.0.0: {}
 
   ieee754@1.2.1: {}
 
